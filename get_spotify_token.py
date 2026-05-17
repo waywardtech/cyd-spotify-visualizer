@@ -104,16 +104,10 @@ def main():
     print("\nAlso make sure these are set:")
     print(f'  #define CLIENT_ID      "{CLIENT_ID}"')
     print(f'  #define CLIENT_SECRET  "{CLIENT_SECRET}"')
-    print("\nThe refresh token doesn't expire (unless you revoke app access).")
-    print("Keep it secret — it gives access to your Spotify account.\n")
-
-    # Save to file for convenience
-    with open("spotify_tokens.txt", "w") as f:
-        f.write(f"CLIENT_ID={CLIENT_ID}\n")
-        f.write(f"CLIENT_SECRET={CLIENT_SECRET}\n")
-        f.write(f"REFRESH_TOKEN={refresh_token}\n")
-        f.write(f"ACCESS_TOKEN={access_token}\n")
-    print("Also saved to: spotify_tokens.txt")
+    print("\n" + "⚠️  SECURITY WARNING".center(55, "─"))
+    print("The refresh token doesn't expire (unless you revoke app access).")
+    print("Keep it secret — it gives access to your Spotify account.")
+    print("Do NOT commit this to version control or share it.\n")
 
 if __name__ == "__main__":
     main()

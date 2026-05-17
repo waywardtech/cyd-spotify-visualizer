@@ -24,6 +24,11 @@
 #define GEAR_Y  (H - 22 + 4)   // sits in HUD strip
 #define GEAR_R  8               // tap radius
 
+// ── Menu button tap zone (bottom-left corner) ────────────────
+#define MENU_X  12
+#define MENU_Y  (H - 22 + 4)   // sits in HUD strip
+#define MENU_R  8               // tap radius
+
 // ═════════════════════════════════════════════════════════════
 //  CREDENTIAL STORAGE
 // ═════════════════════════════════════════════════════════════
@@ -96,6 +101,16 @@ void drawGearIcon(TFT_eSprite &canvas, int cx, int cy, uint16_t col, bool highli
 
   // Centre dot
   canvas.fillCircle(cx, cy, 2, c);
+}
+
+// ═════════════════════════════════════════════════════════════
+//  MENU ICON RENDERER
+//  Draws three horizontal lines (hamburger menu) at (cx, cy)
+// ═════════════════════════════════════════════════════════════
+void drawMenuIcon(TFT_eSprite &canvas, int cx, int cy, uint16_t col) {
+  canvas.drawFastHLine(cx - 5, cy - 4, 10, col);
+  canvas.drawFastHLine(cx - 5, cy, 10, col);
+  canvas.drawFastHLine(cx - 5, cy + 4, 10, col);
 }
 
 // ═════════════════════════════════════════════════════════════

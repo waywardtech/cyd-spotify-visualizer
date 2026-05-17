@@ -29,6 +29,7 @@
 #include <XPT2046_Touchscreen.h>
 #include <Preferences.h>
 #include <math.h>
+#include "spotify_certs.h"
 
 // ═══════════════════════════════════════════════════════════════
 //  SPOTIFY CREDENTIALS
@@ -75,6 +76,7 @@ uint16_t themeColor(float t, float bb);
 
 // ── Include settings module ────────────────────────────────────
 #include "settings.h"
+#include "control_panel.h"
 
 // ═══════════════════════════════════════════════════════════════
 //  SPOTIFY STATE
@@ -92,6 +94,8 @@ String        accessToken = "";
 unsigned long tokenExpiry = 0;
 unsigned long lastPoll    = 0;
 const unsigned long POLL_MS = 3000;
+unsigned long lastSpotifyError = 0;
+bool apiConnected = false;
 
 // ═══════════════════════════════════════════════════════════════
 //  BEAT ENGINE
@@ -188,12 +192,16 @@ int matrixY[MATRIX_COLS]; uint8_t matrixSpeed[MATRIX_COLS];
 float waterfall[H][DISPLAY_BARS]; int waterfallRow=0;
 String scrollText=""; float scrollX=W;
 
-// ═══════════════════════════════════════════════════════════════
-//  GEAR ICON — hit test
-// ═══════════════════════════════════════════════════════════════
+// GEAR ICON — hit test
 bool gearTapped(int tx, int ty) {
   int dx=tx-GEAR_X, dy=ty-GEAR_Y;
   return (dx*dx+dy*dy) <= (GEAR_R+8)*(GEAR_R+8);
+}
+
+// MENU ICON — hit test
+bool menuTapped(int tx, int ty) {
+  int dx=tx-MENU_X, dy=ty-MENU_Y;
+  return (dx*dx+dy*dy) <= (MENU_R+8)*(MENU_R+8);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -247,7 +255,12 @@ void loop() {
       TS_Point p=touch.getPoint();
       int tx=constrain(map(p.x,200,3800,0,W),0,W-1);
       int ty=constrain(map(p.y,200,3800,0,H),0,H-1);
-      if(gearTapped(tx,ty)){
+      if(menuTapped(tx,ty)){
+        // Open control panel
+        runControlPanel();
+        for(int i=0;i<N_STARS;i++) initStar(i,true);
+        lastPoll=0;
+      } else if(gearTapped(tx,ty)){
         // Open settings — blocks until user exits
         bool changed=runSettingsScreen(canvas,touch);
         if(changed&&WiFi.status()==WL_CONNECTED){
@@ -468,6 +481,9 @@ void drawHUD() {
   canvas.fillRect(0,hudY,W,22,rgb16(10,10,10));
   canvas.drawFastHLine(0,hudY,W,themeColor(0.5f,0));
 
+  // Menu button (hamburger icon, bottom-left)
+  drawMenuIcon(canvas, MENU_X, MENU_Y, rgb16(130,130,130));
+
   // Track scroll
   canvas.setTextColor(0xFFFF); canvas.setTextSize(1);
   if(scrollText.length()>0){
@@ -498,6 +514,12 @@ void drawHUD() {
       uint16_t bc=b<bars?rgb16(0,180,0):rgb16(40,40,40);
       canvas.fillRect(W-44+b*5, 12-(b+1)*2, 4, (b+1)*2+1, bc);
     }
+    // Spotify API status indicator (red=error, green=ok, yellow=no track)
+    uint16_t spotifyLed=rgb16(40,40,40);
+    if(millis()-lastSpotifyError<5000) spotifyLed=rgb16(200,60,0);  // red - recent error
+    else if(apiConnected&&track.isPlaying) spotifyLed=rgb16(0,200,0);  // green - playing
+    else if(apiConnected) spotifyLed=rgb16(200,180,0);  // yellow - connected but not playing
+    canvas.fillCircle(W-50, 7, 2, spotifyLed);
   } else {
     canvas.setTextColor(rgb16(200,60,0)); canvas.setTextSize(1);
     canvas.drawString("!", W-44, 4);
@@ -519,24 +541,35 @@ void drawHUD() {
 // ═══════════════════════════════════════════════════════════════
 void refreshAccessToken() {
   if(WiFi.status()!=WL_CONNECTED) return;
-  WiFiClientSecure client; client.setInsecure();
+  WiFiClientSecure client;
+  client.setCACert(SPOTIFY_ROOT_CA);
   HTTPClient http;
   http.begin(client,"https://accounts.spotify.com/api/token");
   http.addHeader("Content-Type","application/x-www-form-urlencoded");
   String b64=base64Encode(String(CLIENT_ID)+":"+String(CLIENT_SECRET));
   http.addHeader("Authorization","Basic "+b64);
   String body="grant_type=refresh_token&refresh_token="; body+=REFRESH_TOKEN;
-  if(http.POST(body)==200){
-    DynamicJsonDocument doc(512); deserializeJson(doc,http.getStream());
-    accessToken=doc["access_token"].as<String>();
-    tokenExpiry=millis()+(int(doc["expires_in"]|3600)-60)*1000UL;
+  int code=http.POST(body);
+  if(code==200){
+    DynamicJsonDocument doc(512);
+    if(deserializeJson(doc,http.getStream())==DeserializationError::Ok){
+      accessToken=doc["access_token"].as<String>();
+      tokenExpiry=millis()+(int(doc["expires_in"]|3600)-60)*1000UL;
+      apiConnected=true;
+      lastSpotifyError=0;
+    }
+  } else {
+    Serial.printf("Token refresh failed: HTTP %d\n",code);
+    lastSpotifyError=millis();
+    apiConnected=false;
   }
   http.end();
 }
 
 void pollCurrentlyPlaying() {
   if(WiFi.status()!=WL_CONNECTED||accessToken.isEmpty()) return;
-  WiFiClientSecure client; client.setInsecure();
+  WiFiClientSecure client;
+  client.setCACert(SPOTIFY_ROOT_CA);
   HTTPClient http;
   http.begin(client,"https://api.spotify.com/v1/me/player/currently-playing");
   http.addHeader("Authorization","Bearer "+accessToken);
@@ -544,7 +577,7 @@ void pollCurrentlyPlaying() {
   int code=http.GET();
   if(code==200){
     DynamicJsonDocument doc(4096);
-    if(!deserializeJson(doc,http.getStream())){
+    if(deserializeJson(doc,http.getStream())==DeserializationError::Ok){
       track.isPlaying=doc["is_playing"]|false;
       auto item=doc["item"];
       if(!item.isNull()){
@@ -556,31 +589,48 @@ void pollCurrentlyPlaying() {
         progressTimestamp=millis();
         scrollText="  *  "+track.trackName+"  -  "+track.artistName+"   ";
         if(newId!=track.trackId){track.trackId=newId;loadAudioFeatures(newId);}
+        apiConnected=true;
+        lastSpotifyError=0;
       }
     }
   } else if(code==204) {
     track.isPlaying=false;
+    apiConnected=true;
+    lastSpotifyError=0;
+  } else if(code==401) {
+    Serial.println("Invalid token - will refresh");
+    tokenExpiry=0;
+  } else {
+    Serial.printf("Poll failed: HTTP %d\n",code);
+    lastSpotifyError=millis();
+    apiConnected=false;
   }
   http.end();
 }
 
 void loadAudioFeatures(String id) {
   if(WiFi.status()!=WL_CONNECTED||accessToken.isEmpty()) return;
-  WiFiClientSecure client; client.setInsecure();
+  WiFiClientSecure client;
+  client.setCACert(SPOTIFY_ROOT_CA);
   HTTPClient http;
   http.begin(client,"https://api.spotify.com/v1/audio-features/"+id);
   http.addHeader("Authorization","Bearer "+accessToken);
-  if(http.GET()==200){
-    DynamicJsonDocument doc(1024); deserializeJson(doc,http.getStream());
-    track.tempo=doc["tempo"]|120.0f;
-    track.energy=doc["energy"]|0.5f;
-    track.danceability=doc["danceability"]|0.5f;
-    track.valence=doc["valence"]|0.5f;
-    track.loudness=doc["loudness"]|-10.0f;
-    track.key=doc["key"]|0;
-    track.musicalMode=doc["mode"]|1;
-    track.featuresLoaded=true;
-    ledNewTrack();
+  int code=http.GET();
+  if(code==200){
+    DynamicJsonDocument doc(1024);
+    if(deserializeJson(doc,http.getStream())==DeserializationError::Ok){
+      track.tempo=doc["tempo"]|120.0f;
+      track.energy=doc["energy"]|0.5f;
+      track.danceability=doc["danceability"]|0.5f;
+      track.valence=doc["valence"]|0.5f;
+      track.loudness=doc["loudness"]|-10.0f;
+      track.key=doc["key"]|0;
+      track.musicalMode=doc["mode"]|1;
+      track.featuresLoaded=true;
+      ledNewTrack();
+    }
+  } else {
+    Serial.printf("Audio features failed: HTTP %d\n",code);
   }
   http.end();
 }
