@@ -181,10 +181,29 @@ Consider moving credentials to a separate `secrets.h` file (not tracked by git) 
 
 ---
 
+## FAQ
+
+**Will this work with a Spotify developer app I create today?**
+Partly. Since 27 November 2024 Spotify has blocked newly created apps from the Audio Features and Audio Analysis endpoints; they return `403`. Currently-playing data still works, but the beat engine and musical colour system rely on BPM, key, valence and energy from Audio Features. Apps that had extended access before that date are unaffected. A fallback BPM source is on the roadmap.
+
+**Do I need a microphone?**
+No. Spectrum and waveform are synthesized from track metadata, not captured audio.
+
+**Which boards are supported?**
+It's tested on the ESP32-2432S028R ("Cheap Yellow Display") with an ILI9341 panel and XPT2046 touch. Other ESP32 + ILI9341 builds should work with pin changes in `User_Setup.h`.
+
+**Why won't it join my Wi-Fi?**
+The ESP32 only supports 2.4 GHz networks.
+
+**Is it safe to fork?**
+Yes. Keep your Client Secret and Refresh Token out of git (see *Security Note*).
+
+---
+
 ## Roadmap
 
 - [ ] `secrets.h` pattern for credential separation
-- [ ] Spotify Audio Analysis endpoint for sample-accurate beat/bar/section sync
+- [ ] Fallback BPM/key source for Spotify apps without Audio Features access
 - [ ] Album art fetch and display
 - [ ] NTP sync to reduce long-session progress drift
 - [ ] mDNS web config page for credential management over browser
