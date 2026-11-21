@@ -3,7 +3,7 @@
 **A beat-synced, music-reactive visualizer for the ESP32-2432S028R (Cheap Yellow Display)**  
 Connects to Spotify via Wi-Fi and drives 7 real-time visualization modes using live track metadata — BPM, energy, danceability, valence, key, and mode.
 
-*Ellis Edition · The Far Edge*
+*Junior Edition · The Far Edge*
 
 <table>
   <tr>
@@ -169,9 +169,13 @@ Credentials are stored in ESP32 NVS (non-volatile storage) and survive reboots. 
 cyd-spotify-visualizer/
 ├── spotify_viz_wifi.ino    # Main sketch
 ├── settings.h              # Wi-Fi settings UI + NVS credential manager
+├── control_panel.h         # Track info, reconnect and account-switch screen
+├── spotify_certs.h         # CA certificate for the Spotify API (TLS)
 ├── get_spotify_token.py    # One-time token helper (run on PC)
+├── QUICK_START.md          # Short setup walkthrough
+├── FLASHING.md             # Flashing notes for the CYD
 ├── README.md
-├── .gitignore
+├── LICENSE
 └── docs/
     └── SETUP.md            # Detailed wiring and setup guide
 ```
@@ -234,4 +238,4 @@ MIT License — see `LICENSE` file.
 
 ---
 
-*Built for Ellis. The Far Edge · Fort Collins, CO*
+*Built for my son. The Far Edge · Fort Collins, CO*

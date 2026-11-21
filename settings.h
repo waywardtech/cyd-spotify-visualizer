@@ -1,7 +1,7 @@
 /*
  * settings.h — Wi-Fi Credential Manager
  * NVS storage · On-screen keyboard · Gear icon tap zone
- * Ellis Edition :: The Far Edge
+ * Junior Edition :: The Far Edge
  */
 
 #pragma once
@@ -9,7 +9,7 @@
 #include <WiFi.h>
 
 // ── Compiled-in defaults (home network fallback) ─────────────
-// Ellis: change SAVED_SSID/PASS via the cogwheel to use test networks.
+// Tip: change SAVED_SSID/PASS via the cogwheel to use test networks.
 // The device always tries NVS first; these are the safety net.
 #define DEFAULT_SSID  "YourHomeSSID"
 #define DEFAULT_PASS  "YourHomePassword"
