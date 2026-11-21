@@ -5,6 +5,24 @@ Connects to Spotify via Wi-Fi and drives 7 real-time visualization modes using l
 
 *Ellis Edition · The Far Edge*
 
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/viz-waveform.png" width="240" alt="Waveform mode on the 320x240 display: a thin dark-blue trace with tall spikes above and below a bright violet centre line on a black screen. The bottom bar shows the scrolling title Sample Track - Demo Artist, seven mode dots with the first one lit, a menu icon at the left and a gear icon at the right."><br><sub><b>Waveform</b></sub></td>
+    <td align="center"><img src="docs/images/viz-spectrum.png" width="240" alt="Spectrum mode: 40 vertical bars shading from navy blue on the left to magenta on the right. The bass bars on the left are tall, the middle bars are almost empty, and the treble bars on the right are short, with a white peak-hold tick above each bar."><br><sub><b>Spectrum</b></sub></td>
+    <td align="center"><img src="docs/images/viz-scatter.png" width="240" alt="Scatter mode: a plus-shaped tangle of crossing blue and violet Lissajous lines at the centre of the screen with white and magenta highlights, and a sparse scatter of violet particles on the black background."><br><sub><b>Scatter</b></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/viz-radial.png" width="240" alt="Radial Burst mode: a violet circle with spokes of varying length radiating outward, coloured from blue to magenta, with a white dot marking the peak of each spoke."><br><sub><b>Radial Burst</b></sub></td>
+    <td align="center"><img src="docs/images/viz-matrix.png" width="240" alt="Matrix Rain mode: thin vertical columns of dark-blue blocks falling down a black screen, each column ending in a brighter blue head block with a white sparkle pixel and a fading trail above it."><br><sub><b>Matrix Rain</b></sub></td>
+    <td align="center"><img src="docs/images/viz-starfield.png" width="240" alt="Starfield mode: many tiny dim violet stars across a black screen, a thin violet circle expanding from the centre as the beat shockwave ring, and two brighter magenta stars near the upper right."><br><sub><b>Starfield</b></sub></td>
+  </tr>
+  <tr>
+    <td align="center" colspan="3"><img src="docs/images/viz-waterfall.png" width="240" alt="Waterfall mode: a scrolling spectrogram filling the screen in bands of bright green, magenta and violet over black, with diagonal ridges sweeping across the 40 frequency columns."><br><sub><b>Waterfall</b></sub></td>
+  </tr>
+</table>
+
+<sub>Screenshots are renders from a host-side emulator of the CYD display. It runs this sketch's own drawing code with sample track data (124 BPM, G major, energy 0.82, valence 0.70, title "Sample Track - Demo Artist"). They are not photos of the device, and each frame was picked on a beat.</sub>
+
 ---
 
 ## Features
