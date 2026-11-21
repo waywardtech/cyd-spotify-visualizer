@@ -151,9 +151,13 @@ Credentials are stored in ESP32 NVS (non-volatile storage) and survive reboots. 
 cyd-spotify-visualizer/
 ├── spotify_viz_wifi.ino    # Main sketch
 ├── settings.h              # Wi-Fi settings UI + NVS credential manager
+├── control_panel.h         # Track info, reconnect and account-switch screen
+├── spotify_certs.h         # CA certificate for the Spotify API (TLS)
 ├── get_spotify_token.py    # One-time token helper (run on PC)
+├── QUICK_START.md          # Short setup walkthrough
+├── FLASHING.md             # Flashing notes for the CYD
 ├── README.md
-├── .gitignore
+├── LICENSE
 └── docs/
     └── SETUP.md            # Detailed wiring and setup guide
 ```
