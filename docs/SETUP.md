@@ -1,5 +1,5 @@
 # CYD Spotify Live Visualizer — Wi-Fi Edition
-## Setup & Architecture Guide :: Ellis Edition
+## Setup & Architecture Guide :: Junior Edition
 
 ---
 
@@ -165,4 +165,4 @@ A happy song in G major = warm, softer gold.
 
 ---
 
-*Connecting Ellis's room to the music. The Far Edge, Fort Collins CO.*
+*Connecting my son's room to the music. The Far Edge, Fort Collins CO.*

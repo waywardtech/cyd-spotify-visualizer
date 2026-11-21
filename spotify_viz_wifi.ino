@@ -2,7 +2,7 @@
  * ╔══════════════════════════════════════════════════════════════╗
  * ║   SPOTIFY LIVE VISUALIZER  —  ESP32-2432S028R (CYD)         ║
  * ║   Wi-Fi · OAuth · Beat-Synced · Settings · Gear Icon        ║
- * ║   Ellis Edition :: The Far Edge                             ║
+ * ║   Junior Edition :: The Far Edge                            ║
  * ╚══════════════════════════════════════════════════════════════╝
  *
  *  Touch the ⚙ cogwheel (bottom-right HUD) to open Wi-Fi settings.
@@ -658,7 +658,7 @@ void splashScreen(){
   tft.setTextSize(2);tft.setTextColor(themeColor(0.7f,0));
   tft.drawString("SPOTIFY VIZ",60,65);
   tft.setTextSize(1);tft.setTextColor(rgb16(100,100,100));
-  tft.drawString("Ellis Edition :: The Far Edge",34,96);
+  tft.drawString("Junior Edition :: The Far Edge",34,96);
   tft.setTextColor(rgb16(60,80,60));
   tft.drawString("Tap anywhere to cycle modes",64,140);
   tft.setTextColor(rgb16(100,100,80));

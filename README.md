@@ -3,7 +3,7 @@
 **A beat-synced, music-reactive visualizer for the ESP32-2432S028R (Cheap Yellow Display)**  
 Connects to Spotify via Wi-Fi and drives 7 real-time visualization modes using live track metadata — BPM, energy, danceability, valence, key, and mode.
 
-*Ellis Edition · The Far Edge*
+*Junior Edition · The Far Edge*
 
 ---
 
@@ -220,4 +220,4 @@ MIT License — see `LICENSE` file.
 
 ---
 
-*Built for Ellis. The Far Edge · Fort Collins, CO*
+*Built for my son. The Far Edge · Fort Collins, CO*

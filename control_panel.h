@@ -1,7 +1,7 @@
 /*
  * control_panel.h — Track Control & Spotify Account Screen
  * Access via menu button on HUD — allows track info, reconnect, account switching
- * Ellis Edition :: The Far Edge
+ * Junior Edition :: The Far Edge
  */
 
 #pragma once
