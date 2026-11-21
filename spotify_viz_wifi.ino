@@ -55,6 +55,10 @@ TFT_eSPI             tft    = TFT_eSPI();
 TFT_eSprite          canvas = TFT_eSprite(&tft);
 XPT2046_Touchscreen  touch(TOUCH_CS, TOUCH_IRQ);
 
+// Defined in settings.h. Declared here because the Arduino build inserts
+// auto-generated prototypes (e.g. connectWithCreds) above the includes.
+struct WifiCreds;
+
 // ── Colour helpers — must be declared before settings.h ───────
 uint16_t rgb16(uint8_t r, uint8_t g, uint8_t b) {
   return ((r>>3)<<11)|((g>>2)<<5)|(b>>3);
@@ -73,10 +77,6 @@ uint16_t hsv16(float h, float s, float v) {
 float getBaseHue();
 float getHueSweep();
 uint16_t themeColor(float t, float bb);
-
-// ── Include settings module ────────────────────────────────────
-#include "settings.h"
-#include "control_panel.h"
 
 // ═══════════════════════════════════════════════════════════════
 //  SPOTIFY STATE
@@ -104,6 +104,11 @@ float beatPhase     = 0.0f;
 float beatIntensity = 0.0f;
 long  localProgressMs    = 0;
 unsigned long progressTimestamp = 0;
+
+// ── Include settings module ────────────────────────────────────
+// After the Spotify state and beat-engine globals, which control_panel.h uses.
+#include "settings.h"
+#include "control_panel.h"
 
 void ledBeat();   // forward
 void ledNewTrack();
